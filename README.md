@@ -1,21 +1,22 @@
 # seegle
 
-Structure
+##Structure
 - [ ] app.py
   - ROUTES:
     - [ ] home/root
     - [ ] results
 
 - [ ] templates 
-  - [ ] home/query
+  - [ ] home/query.html
 
 - [ ] static
   - [ ] style.css
   - [ ] logo.jpg/png
 
 
-- [ ] conchshell
-  - [ ] some kind of parser to determine which function to use
-  - [ ] who 
-  - [ ] when
+- [ ] conchshell.py
+  - [ ] query parser  
+  - [ ] api call soup - nellie
+  - [ ] who - sally
+  - [ ] when - mariya
   - [ ] where (limited + optional)
