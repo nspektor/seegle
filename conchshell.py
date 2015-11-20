@@ -1,4 +1,5 @@
 import google, urllib2, bs4, re
+
 def api_stuff(query):
     pages = google.search(query,num=10,start=0,stop=10)
     texts = []
