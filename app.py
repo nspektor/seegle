@@ -7,6 +7,10 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
+@app.route("/results")
+def results():
+    return render_template("results.html")
+
 if __name__=="__main__":
     app.debug = True
     app.run(host='0.0.0.0',port=8000)
