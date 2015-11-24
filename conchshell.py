@@ -47,17 +47,22 @@ def who(query):
 
 def when(query):
     pages=api_stuff(query)
-    regexp_std='(?<month>[A-Z][a-z]{2,8}) (?<day>\d{1,2}),? (?<year>\d{1,4})'
+    regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
+    #regexp_std='[A-Z]'
     regexp_era='(\d{1,10}) (BC|AD)'
+    l = get_max_freq(pages, regexp_std)
+    """
     d={}
     result=[]
     for page in pages:
-        result=result+findall(regexp_std,page)+findall(regexp_era,page)
+        result=result+re.findall(regexp_std,page)+re.findall(regexp_era,page)
     for name in result:
         if name in d:
             d[name]+=1
         else:
             d[name]=1
+    """
+    return l
 
 
 def contains(string, l):
@@ -118,9 +123,9 @@ def max_val(d):
 if __name__ == "__main__":
 
     #print who("Who wrote The Things They Carried?")
-    #print who("Who said \" Let them eat cake\"?")
-    print who("Who was emperor of Rome?")
-            
+    #print who("Who said \" Lext them eat cake\"?")
+    #print who("Who was emperor of Rome?")
+    print when("When did World War II start?")        
 
        
            
