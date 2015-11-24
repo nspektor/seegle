@@ -1,5 +1,6 @@
 import google, urllib2, bs4, re
 
+
 stop_words = []
 
 def load_stop_words():
@@ -102,3 +103,8 @@ if __name__ == "__main__":
     #print who("Who said \" Let them eat cake\"?")
     print who("Who was emperor of Rome?")
             
+
+       
+           
+           
+           
