@@ -31,6 +31,8 @@ def api_stuff(query):
     return texts
 
 
+
+
 def who(query):
     pages = api_stuff(query)
     pattern = "[A-Z]{1}[a-z]{2,} [A-Z]{1}[']?[A-Z]?[a-z]{1,}"
@@ -41,6 +43,22 @@ def who(query):
         #return names[0]
    
     return names
+
+
+def when(query):
+    pages=api_stuff(query)
+    regexp_std='(?<month>[A-Z][a-z]{2,8}) (?<day>\d{1,2}),? (?<year>\d{1,4})'
+    regexp_era='(\d{1,10}) (BC|AD)'
+    d={}
+    result=[]
+    for page in pages:
+        result=result+findall(regexp_std,page)+findall(regexp_era,page)
+    for name in result:
+        if name in d:
+            d[name]+=1
+        else:
+            d[name]=1
+
 
 def contains(string, l):
     words = string.split(" ")
@@ -108,3 +126,5 @@ if __name__ == "__main__":
            
            
            
+
+
