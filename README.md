@@ -7,7 +7,8 @@
     - [ ] results
 
 - [ ] templates 
-  - [ ] home/query.html
+  - [ ] home.html
+  - [ ] resuls.html
 
 - [ ] static
   - [ ] style.css
