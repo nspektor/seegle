@@ -70,6 +70,7 @@ def get_max_freq(pages, pattern):
                 d[name] = 1
             else:
                 d[name] += 1
+    print d
     maxx = max_val(d)
     return maxx
    
