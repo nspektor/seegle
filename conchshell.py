@@ -61,19 +61,15 @@ def get_max_freq(pages, pattern):
     Returns:
       A list of keys with the max occurences
     """
-    if not stop_words:
-        load_stop_words()
-        
     d = {}
     for page in pages:
         result = re.findall(pattern, page)
         for name in result:
             #print name
-            if not contains(name, stop_words):
-                if name not in d:
-                    d[name] = 1
-                else:
-                    d[name] += 1
+            if name not in d:
+                d[name] = 1
+            else:
+                d[name] += 1
     maxx = max_val(d)
     return maxx
    
@@ -88,6 +84,9 @@ def max_val(d):
     Return:
       A list of keys with the max occurences (in case there are multiple)
     """
+    if not stop_words:
+        load_stop_words()
+        
     max_val = max(d.values())
     keys = []
     for x,y in d.items():
@@ -98,6 +97,7 @@ def max_val(d):
 
 if __name__ == "__main__":
 
-    print who("Who wrote The Things They Carried?")
+    #print who("Who wrote The Things They Carried?")
     #print who("Who said \" Let them eat cake\"?")
+    print who("Who was emperor of Rome?")
             
