@@ -114,20 +114,21 @@ def max_val(d):
     return keys
 
 
-def parse_query(query):
-    """Parses user query to determine which search to perform
+def find_results(query):
+    """Parses user query to determine which search to perform, then performs the search
 
     Arguments:
      query: a string that is the user's query input
 
     Return:
-     A string describing the query ("who", "when", or "invalid")
+     If the query is valid, return results of the query. Else, return error
+     
     """
     q=query.lower()
     if "who" in query:
-        return "who"
+        return who(query)
     else if "when" in query:
-        return "when"
+        return when(query)
     else:
         return "invalid"
     
