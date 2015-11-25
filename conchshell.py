@@ -87,7 +87,8 @@ def get_max_freq(pages, pattern):
     """
     d = {}
     for page in pages:
-        result = re.findall(pattern, page)        for name in result:
+        result = re.findall(pattern, page)
+        for name in result:
             #print name
             if name not in d:
                 d[name] = 1
@@ -111,8 +112,8 @@ def max_val(d):
         load_stop_words()
 
     for key in d.keys():
-        if contains(d[key], stop_words):
-            d.pop(d[key])
+        if contains(key, stop_words):
+            d.pop(key)
             
     max_val = max(d.values())
     keys = []
@@ -135,7 +136,7 @@ def find_results(query):
     q=query.lower()
     if "who" in query:
         return who(query)
-    else if "when" in query:
+    elif "when" in query:
         return when(query)
     else:
         return "invalid"
