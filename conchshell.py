@@ -41,8 +41,8 @@ def who(query):
     #do some more stuff
     #if len(names) == 1:
         #return names[0]
-   
-    return names
+    l = max_val(names)
+    return l
 
 
 def when(query):
@@ -83,7 +83,7 @@ def get_max_freq(pages, pattern):
       pattern: a regex string for matching
 
     Returns:
-      A list of keys with the max occurences
+      A dictionary of matches whose values reflect the frequency
     """
     d = {}
     for page in pages:
@@ -94,9 +94,8 @@ def get_max_freq(pages, pattern):
                 d[name] = 1
             else:
                 d[name] += 1
-    print d
-    maxx = max_val(d)
-    return maxx
+    return d
+   
    
 
 
@@ -111,7 +110,11 @@ def max_val(d):
     """
     if not stop_words:
         load_stop_words()
-        
+
+    for key in d.keys():
+        if contains(d[key], stop_words):
+            d.pop(d[key])
+            
     max_val = max(d.values())
     keys = []
     for x,y in d.items():
@@ -122,10 +125,10 @@ def max_val(d):
 
 if __name__ == "__main__":
 
-    #print who("Who wrote The Things They Carried?")
-    #print who("Who said \" Lext them eat cake\"?")
+    print who("Who wrote The Things They Carried?")
+    print who("Who said \" Let them eat cake\"?")
     #print who("Who was emperor of Rome?")
-    print when("When did World War II start?")        
+    #print when("When did World War II start?")        
 
        
            
