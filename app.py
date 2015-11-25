@@ -1,5 +1,5 @@
 import urllib2
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 
 app = Flask(__name__)
 
@@ -10,8 +10,8 @@ def home():
         return render_template("home.html")
     else:
         q = request.form.get('query')
+        
         return redirect(url_for("results",query=q))
-
 @app.route("/results",  methods=["GET","POST"])
 @app.route("/results/<query>",  methods=["GET","POST"])
 def results(query):
