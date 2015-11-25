@@ -112,8 +112,8 @@ def max_val(d):
         load_stop_words()
 
     for key in d.keys():
-        if contains(d[key], stop_words):
-            d.pop(d[key])
+        if contains(key, stop_words):
+            d.pop(key)
             
     max_val = max(d.values())
     keys = []
@@ -125,8 +125,9 @@ def max_val(d):
 
 if __name__ == "__main__":
 
-    print who("Who wrote The Things They Carried?")
-    print who("Who said \" Let them eat cake\"?")
+    #print who("Who wrote The Things They Carried?")
+    #print who("Who said \" Let them eat cake\"?")
+    
     #print who("Who was emperor of Rome?")
     #print when("When did World War II start?")        
 
