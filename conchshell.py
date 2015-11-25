@@ -82,8 +82,7 @@ def get_max_freq(pages, pattern):
     """
     d = {}
     for page in pages:
-        result = re.findall(pattern, page)
-        for name in result:
+        result = re.findall(pattern, page)        for name in result:
             #print name
             if name not in d:
                 d[name] = 1
@@ -115,6 +114,23 @@ def max_val(d):
     return keys
 
 
+def parse_query(query):
+    """Parses user query to determine which search to perform
+
+    Arguments:
+     query: a string that is the user's query input
+
+    Return:
+     A string describing the query ("who", "when", or "invalid")
+    """
+    q=query.lower()
+    if "who" in query:
+        return "who"
+    else if "when" in query:
+        return "when"
+    else:
+        return "invalid"
+    
 if __name__ == "__main__":
 
     #print who("Who wrote The Things They Carried?")
