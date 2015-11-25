@@ -112,8 +112,8 @@ def max_val(d):
         load_stop_words()
 
     for key in d.keys():
-        if contains(d[key], stop_words):
-            d.pop(d[key])
+        if contains(key, stop_words):
+            d.pop(key)
             
     max_val = max(d.values())
     keys = []
@@ -123,6 +123,24 @@ def max_val(d):
     return keys
 
 
+def find_results(query):
+    """Parses user query to determine which search to perform, then performs the search
+
+    Arguments:
+     query: a string that is the user's query input
+
+    Return:
+     If the query is valid, return results of the query. Else, return error
+     
+    """
+    q=query.lower()
+    if "who" in query:
+        return who(query)
+    elif "when" in query:
+        return when(query)
+    else:
+        return "invalid"
+    
 if __name__ == "__main__":
 
     print who("Who wrote The Things They Carried?")
