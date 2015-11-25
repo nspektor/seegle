@@ -41,23 +41,28 @@ def who(query):
     #do some more stuff
     #if len(names) == 1:
         #return names[0]
-   
-    return names
+    l = max_val(names)
+    return l
 
 
 def when(query):
     pages=api_stuff(query)
-    regexp_std='(?<month>[A-Z][a-z]{2,8}) (?<day>\d{1,2}),? (?<year>\d{1,4})'
+    regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
+    #regexp_std='[A-Z]'
     regexp_era='(\d{1,10}) (BC|AD)'
+    l = get_max_freq(pages, regexp_std)
+    """
     d={}
     result=[]
     for page in pages:
-        result=result+findall(regexp_std,page)+findall(regexp_era,page)
+        result=result+re.findall(regexp_std,page)+re.findall(regexp_era,page)
     for name in result:
         if name in d:
             d[name]+=1
         else:
             d[name]=1
+    """
+    return l
 
 
 def contains(string, l):
@@ -78,7 +83,7 @@ def get_max_freq(pages, pattern):
       pattern: a regex string for matching
 
     Returns:
-      A list of keys with the max occurences
+      A dictionary of matches whose values reflect the frequency
     """
     d = {}
     for page in pages:
@@ -88,9 +93,8 @@ def get_max_freq(pages, pattern):
                 d[name] = 1
             else:
                 d[name] += 1
-    print d
-    maxx = max_val(d)
-    return maxx
+    return d
+   
    
 
 
@@ -105,7 +109,11 @@ def max_val(d):
     """
     if not stop_words:
         load_stop_words()
-        
+
+    for key in d.keys():
+        if contains(d[key], stop_words):
+            d.pop(d[key])
+            
     max_val = max(d.values())
     keys = []
     for x,y in d.items():
@@ -134,10 +142,10 @@ def find_results(query):
     
 if __name__ == "__main__":
 
-    #print who("Who wrote The Things They Carried?")
-    #print who("Who said \" Let them eat cake\"?")
-    print who("Who was emperor of Rome?")
-            
+    print who("Who wrote The Things They Carried?")
+    print who("Who said \" Let them eat cake\"?")
+    #print who("Who was emperor of Rome?")
+    #print when("When did World War II start?")        
 
        
            
