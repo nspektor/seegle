@@ -1,5 +1,6 @@
 import urllib2
 from flask import Flask, request, render_template, redirect, url_for
+from conchshell import find_results
 
 app = Flask(__name__)
 
@@ -34,7 +35,7 @@ def results(query):
     """
 
     try:
-        result = conchshell.find_results(query)
+        result = find_results(query)
         return render_template("results.html", question=query, answer=result, error=False)
     except:
         return render_template("results.html", question=query, answer="nope", error=["your question is wrong"])
