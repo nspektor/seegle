@@ -1,0 +1,7 @@
+Finding Algorithms:
+
+1) Frequency - max value of match using sum of all occurences
+
+2) Point value - 
+
+3) 

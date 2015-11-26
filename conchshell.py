@@ -42,6 +42,8 @@ def who(query):
     #if len(names) == 1:
         #return names[0]
     l = max_val(names)
+    if not l:
+        return "I don't know, sorry."
     return l
 
 
@@ -133,7 +135,7 @@ def find_results(query):
      If the query is valid, return results of the query. Else, return error
      
     """
-    q=query.lower()
+    query=query.lower()
     if "who" in query:
         return who(query)
     elif "when" in query:
@@ -145,8 +147,8 @@ if __name__ == "__main__":
 
     #print who("Who wrote The Things They Carried?")
     #print who("Who said \" Let them eat cake\"?")
-    
-    #print who("Who was emperor of Rome?")
+    #print find_results("Who played Spiderman?")
+    print find_results("Who killed Julius Caesar?")
     #print when("When did World War II start?")        
 
        
