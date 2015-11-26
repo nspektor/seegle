@@ -16,7 +16,8 @@ def home():
         return render_template("home.html")
     else:
         q = request.form.get('query')
-        
+        if(q==""):
+            q="no question entered, try again"
         return redirect(url_for("results",query=q))
 @app.route("/results",  methods=["GET","POST"])
 @app.route("/results/<query>",  methods=["GET","POST"])
@@ -31,6 +32,7 @@ def results(query):
      html page with answer to query
 
     """
+
     try:
         result = conchshell.find_results(query)
         return render_template("results.html", question=query, answer=result, error=False)
