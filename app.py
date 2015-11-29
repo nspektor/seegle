@@ -16,11 +16,15 @@ def home():
     if request.method == "GET":
         return render_template("home.html")
     else:
-        q = request.form.get('query')
-        if(q==""):
-            q="no question entered, try again"
-        return redirect(url_for("results",query=q))
-@app.route("/results",  methods=["GET","POST"])
+        q = request.form["query"]
+        if (not q or
+            q.isspace()):
+            
+            return render_template("home.html")
+        
+        return redirect(url_for("results", query=q))
+
+    
 @app.route("/results/<query>",  methods=["GET","POST"])
 def results(query):
     """Gets query that the user entered in the home page 
@@ -32,11 +36,10 @@ def results(query):
      html page with answer to query
     """
 
-    try:
-        result = find_results(query)
-        return render_template("results.html", question=query, answer=result, error=False)
-    except:
-        return render_template("results.html", question=query, answer="nope", error=["your question is wrong"])
+  
+    result = find_results(query)
+    return render_template("results.html", question=query, answer=result)
+   
 
 if __name__=="__main__":
     app.debug = True

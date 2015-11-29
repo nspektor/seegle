@@ -1,9 +1,19 @@
-import google, urllib2, bs4, re
+import google, urllib2, bs4, re, random
 from threading import Thread
 from collections import Counter
 
 
 stop_words = []
+answers = [ "It is certain", "It is decidedly so",
+            "Without a doubt", "Yes, definitely",
+            "You may rely on it", "As I see it, yes",
+            "Most likely", "Outlook good",
+            "Yes", "Signs point to yes",
+            "Reply hazy, try again", "Ask again later",
+            "Better not tell you now", "Concentrate and ask again",
+            "Cannot predict now", "Don't count on it",
+            "My reply is no", "My sources say no",
+            "Outlook not so good", "Very doubtful" , "42"]
 
 def load_stop_words():
     """reads stop-words into dictionary from static
@@ -65,57 +75,64 @@ def who(query):
     pattern = "([A-Z]([a-z]+))?[A-Z]([a-z]+|\.) ([A-Z]')?([A-Z]([a-z]+))?[A-Z]([a-z]+|\.)"
 
     freq = get_max_freq(pages, pattern)
-    points = get_points(pages, pattern)
-   
-    #print "Pages: %d" % len(pages)
     l1 = max_val(freq)
-    l2 = max_val(points)
-    """
-    print "By frequency: "
-    print l1
-    print "By points: "
-    print l2
-    """
-    l1 += l2
+    
+    if len(l1) > 1:
+        l2 = max_val(points)
+        points = get_points(pages, pattern)
+        l1 += l2
+
+        count = Counter(l1)
+        common = count.most_common(1)
+    
+        return common[0][0]
 
     if not l1:
-        return "I don't know, sorry."
+        return random.choice(answers)
     
-    count = Counter(l1)
-    common = count.most_common(1)
-    
-    return common[0][0]
+    return l1[0]
 
 
 def when(query):
     pages=api_stuff(query)
     regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
-    #regexp_std='[A-Z]'
     regexp_era='(\d{1,10}) (BC|AD)'
-    l = get_max_freq(pages, regexp_std)
-    """
-    d={}
-    result=[]
-    for page in pages:
-        result=result+re.findall(regexp_std,page)+re.findall(regexp_era,page)
-    for name in result:
-        if name in d:
-            d[name]+=1
-        else:
-            d[name]=1
-    """
-    return l
+    l = get_max_freq_d(pages, regexp_std)
+    maxx = max_val(l)
+
+    if not maxx:
+        return random.choice(answers)
+    
+    return maxx[0]
 
 
 def contains(phrase, l):
     words = phrase.split(" ")
     for word in words:
-        #word = word.lower()
         if word.lower() in l:
             return True
     return False
 
-    
+def get_max_freq_d(pages, pattern):
+    """Tallies up matches to pattern within pages and calculates the match with the highest frequency
+
+    Arguments:
+      pages: A list of strings holding text 
+      pattern: a regex string for matching
+
+    Returns:
+      A dictionary of matches whose values reflect the frequency
+    """
+    d = {}
+    for page in pages:
+        it = re.finditer(pattern, page)
+        for match in it:
+            first = match.group(0)
+            if first not in d:
+                d[first] = 1
+            else:
+                d[first] += 1
+    return d   
 
 def get_max_freq(pages, pattern):
     """Tallies up matches to pattern within pages and calculates the match with the highest frequency
@@ -129,7 +146,6 @@ def get_max_freq(pages, pattern):
     """
     d = {}
     for page in pages:
-        #result = re.findall(pattern, page)
         it = re.finditer(pattern, page)
         for match in it:
             first = match.group(0)
@@ -209,7 +225,7 @@ def find_results(query):
     elif "when" in query:
         return when(query)
     else:
-        return "invalid"
+        return random.choice(answers)
     
 if __name__ == "__main__":
 
