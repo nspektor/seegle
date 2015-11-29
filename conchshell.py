@@ -55,7 +55,7 @@ def api_stuff(query):
     Returns:
       texts: a list of text strings, one for each url page
     """
-    pages = google.search(query,num=20,start=0,stop=20)
+    pages = google.search(query,num=10,start=0,stop=20)
     threads = []
     texts = []
     

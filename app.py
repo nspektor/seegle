@@ -36,10 +36,17 @@ def results(query):
     Return:
      html page with answer to query
     """
-  
-    result = find_results(query)
-    return render_template("results.html", question=query, answer=result)
-   
+    if request.method == "GET":
+        result = find_results(query)
+        return render_template("results.html", question=query, answer=result)
+    else:
+        q = request.form["query"]
+        if (not q or
+            q.isspace()):
+            
+            return render_template("results.html")
+        
+        return redirect(url_for("results", query=q))
 
 
 if __name__=="__main__":
