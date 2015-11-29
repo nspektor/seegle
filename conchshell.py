@@ -31,8 +31,6 @@ def api_stuff(query):
     return texts
 
 
-
-
 def who(query):
     pages = api_stuff(query)
     pattern = "[A-Z]{1}[a-z]{2,} [A-Z]{1}[']?[A-Z]?[a-z]{1,}"
@@ -84,12 +82,19 @@ def get_max_freq(pages, pattern):
 
     Returns:
       A dictionary of matches whose values reflect the frequency
+
+    >>> get_max_freq(["John Smith is not James Smith.","Julius Caesar was the Roman emperor."], "[A-Z]{1}[a-z]{2,} [A-Z]{1}[']?[A-Z]?[a-z]{1,}")
+    {"John Smith":1, "James Smith": 1, "Julius Caesar":1}
+    >>> get_max_freq(["World War Two began on September 1, 1939.", "The Roman Empire fell in 476 AD."], "([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})")
+    {"September 1, 1939":1}
+    >>> get_max_freq(["World War Two began on September 1, 1939.", "The Roman Empire fell in 476 AD."], "(\d{1,10}) (BC|AD)")
+    {"476 AD"}
     """
     d = {}
     for page in pages:
         result = re.findall(pattern, page)
         for name in result:
-            #print name
+            print name
             if name not in d:
                 d[name] = 1
             else:
@@ -142,9 +147,10 @@ def find_results(query):
         return "invalid"
     
 if __name__ == "__main__":
-
-    print who("Who wrote The Things They Carried?")
-    print who("Who said \" Let them eat cake\"?")
+    import doctest
+    doctest.testmod()
+    #print who("Who wrote The Things They Carried?")
+    #print who("Who said \" Let them eat cake\"?")
     #print who("Who was emperor of Rome?")
     #print when("When did World War II start?")        
 
