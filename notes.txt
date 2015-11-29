@@ -1,0 +1,9 @@
+Finding Algorithms:
+
+1) Frequency - max value of match using sum of all occurences
+
+2) Points -
+	   1) More points for each subsequent appearance on a page
+		 2) Exclude if matches part of question
+
+3) 

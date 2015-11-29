@@ -8,14 +8,15 @@ def load_stop_words():
     reads stop-words into dictionary from static
     """
     global stop_words
-    file = open("static/stop-word-list.csv", 'r')
+    #file = open("static/stop-word-list.csv", 'r')
+    file = open("static/stop2.csv", 'r')
     for line in file:
         l = line.split(", ")
         stop_words += l
     file.close()
 
     
-def api_stuff(query):
+def api_stuff(query):ls
     pages = google.search(query,num=10,start=0,stop=10)
     texts = []
     for r in pages:
