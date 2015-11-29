@@ -32,14 +32,15 @@ def results(query):
     
     Arguments:
      query: a string that is the user's query input
+
     Return:
      html page with answer to query
     """
-
   
     result = find_results(query)
     return render_template("results.html", question=query, answer=result)
    
+
 
 if __name__=="__main__":
     app.debug = True
