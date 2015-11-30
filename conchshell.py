@@ -159,8 +159,13 @@ def max_val(d):
             #print 'out: '+ key
             d.pop(key)
             
-    max_val = max(d.values())
     keys = []
+
+    if not d:
+        return keys
+    
+    max_val = max(d.values())
+
     for x,y in d.items():
         if y == max_val:
             keys.append(x)
