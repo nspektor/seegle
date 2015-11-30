@@ -1,76 +1,108 @@
 import google, urllib2, bs4, re
+import random
+from threading import Thread
+
 
 
 stop_words = []
+answers = [ "It is certain", "It is decidedly so",
+            "Without a doubt", "Yes, definitely",
+            "You may rely on it", "As I see it, yes",
+            "Most likely", "Outlook good",
+            "Yes", "Signs point to yes",
+            "Reply hazy, try again", "Ask again later",
+            "Better not tell you now", "Concentrate and ask again",
+            "Cannot predict now", "Don't count on it",
+            "My reply is no", "My sources say no",
+            "Outlook not so good", "Very doubtful" , "42"]
 
 def load_stop_words():
     """
     reads stop-words into dictionary from static
     """
     global stop_words
-    #file = open("static/stop-word-list.csv", 'r')
     file = open("static/stop3.csv", 'r')
     for line in file:
         l = line.split(", ")
         stop_words += l
     file.close()
 
+
+def process_page(page, l):
+    """Opens url and uses Beautiful Soup to extract text
     
+    Arguments:
+      page: a url string
+      l: the list to append the result to
+    """
+    text = None
+    try:
+        url = urllib2.urlopen(page)
+        result_page = url.read().encode("ascii", 'ignore')
+        soup = bs4.BeautifulSoup(result_page, "html.parser")
+        raw = soup.get_text()
+        text = re.sub("[\t\n ]+",' ', raw)
+    except:
+        pass
+
+    if text:
+        l.append(text)
+
+        
 def api_stuff(query):
-    pages = google.search(query,num=10,start=0,stop=10)
+    """Extract text from several urls using threads
+    
+    Arguments:
+      query: a string containing a question
+    Returns:
+      texts: a list of text strings, one for each url page
+    """
+    pages = google.search(query,num=10,start=0,stop=20)
+    threads = []
     texts = []
-    for r in pages:
-        try:
-            url = urllib2.urlopen(r)
-            result_page = url.read().encode("ascii", 'ignore')
-            soup = bs4.BeautifulSoup(result_page, "html.parser")
-            raw = soup.get_text()
-            text = re.sub("[\t\n ]+",' ', raw)
-            texts.append(text)
-        except:
-            pass
+    
+    for page in pages:
+        threads.append(Thread(target = process_page,
+                              args = (page, texts)))
+        
+    [t.start() for t in threads]
+    [t.join() for t in threads]
+ 
     return texts
 
 
 def who(query):
     pages = api_stuff(query)
-    pattern = "[A-Z]{1}[a-z]{2,} [A-Z]{1}[']?[A-Z]?[a-z]{1,}"
-    names = get_max_freq(pages, pattern)
-    #if there is more than one name in names
-    #do some more stuff
-    #if len(names) == 1:
-        #return names[0]
-    l = max_val(names)
-    return l
+    pattern = "(([A-Z]([a-z]+))?[A-Z]([a-z]+|\.) ([A-Z]')?([A-Z]([a-z]+))?[A-Z]([a-z]+|\.))"
+
+    freq = get_max_freq(pages, pattern)
+    maxx = max_val(freq)
+   
+    if not maxx:
+        return random.choice(answers)
+    
+    return maxx[0]
 
 
 def when(query):
     pages=api_stuff(query)
     #regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
-    #regexp_std='[A-Z]'
     regexp="([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})|(\d{1,10}) (BC|AD)|in (\d{1,6})"
     #regexp_era='(\d{1,10}) (BC|AD)'
     l = get_max_freq(pages, regexp)
-    """
-    d={}
-    result=[]
-    for page in pages:
-        result=result+re.findall(regexp_std,page)+re.findall(regexp_era,page)
-    for name in result:
-        if name in d:
-            d[name]+=1
-        else:
-            d[name]=1
-    """
-    return l
+    maxx = max_val(l)
+    
+    if not maxx:
+        return random.choice(answers)
+    
+    return maxx[0]
 
 
 def contains(string, l):
     words = string.split(" ")
     for word in words:
-        #word = word.lower()
         if word.lower() in l:
-            print "word: "+word.lower()
+            #print "word: "+word.lower()
             return True
     return False
 
@@ -95,13 +127,14 @@ def get_max_freq(pages, pattern):
     """
     d = {}
     for page in pages:
-        result = re.findall(pattern, page)
-        for name in result:
-            print name
-            if name not in d:
-                d[name] = 1
+        it = re.finditer(pattern, page)
+        for match in it:
+            first = match.group(0)
+            if first not in d:
+                d[first] = 1
             else:
-                d[name] += 1
+                d[first] += 1
+
     return d
    
    
@@ -121,7 +154,7 @@ def max_val(d):
 
     for key in d.keys():
         if contains(key, stop_words):
-            print 'out: '+ key
+            #print 'out: '+ key
             d.pop(key)
             
     max_val = max(d.values())
@@ -148,7 +181,7 @@ def find_results(query):
     elif "when" in q:
         return when(query)
     else:
-        return "invalid"
+        return random.choice(answers)
     
 if __name__ == "__main__":
     import doctest
