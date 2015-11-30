@@ -48,7 +48,7 @@ def when(query):
     pages=api_stuff(query)
     #regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
     #regexp_std='[A-Z]'
-    regexp="([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})|(\d{1,10}) (BC|AD)"
+    regexp="([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})|(\d{1,10}) (BC|AD)|in (\d{1,6})"
     #regexp_era='(\d{1,10}) (BC|AD)'
     l = get_max_freq(pages, regexp)
     """
