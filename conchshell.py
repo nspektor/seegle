@@ -9,14 +9,14 @@ def load_stop_words():
     """
     global stop_words
     #file = open("static/stop-word-list.csv", 'r')
-    file = open("static/stop2.csv", 'r')
+    file = open("static/stop3.csv", 'r')
     for line in file:
         l = line.split(", ")
         stop_words += l
     file.close()
 
     
-def api_stuff(query):ls
+def api_stuff(query):
     pages = google.search(query,num=10,start=0,stop=10)
     texts = []
     for r in pages:
@@ -69,6 +69,7 @@ def contains(string, l):
     for word in words:
         #word = word.lower()
         if word.lower() in l:
+            print "word: "+word.lower()
             return True
     return False
 
@@ -119,6 +120,7 @@ def max_val(d):
 
     for key in d.keys():
         if contains(key, stop_words):
+            print 'out: '+ key
             d.pop(key)
             
     max_val = max(d.values())
