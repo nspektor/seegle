@@ -9,7 +9,7 @@ def load_stop_words():
     """
     global stop_words
     #file = open("static/stop-word-list.csv", 'r')
-    file = open("static/stop3.csv", 'r')
+    file = open("static/stop4.csv", 'r')
     for line in file:
         l = line.split(", ")
         stop_words += l
