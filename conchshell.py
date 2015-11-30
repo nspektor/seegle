@@ -1,6 +1,7 @@
-import google, urllib2, bs4, re, random
+import google, urllib2, bs4, re
+import random
 from threading import Thread
-from collections import Counter
+
 
 
 stop_words = []
@@ -16,10 +17,11 @@ answers = [ "It is certain", "It is decidedly so",
             "Outlook not so good", "Very doubtful" , "42"]
 
 def load_stop_words():
-    """reads stop-words into dictionary from static
+    """
+    reads stop-words into dictionary from static
     """
     global stop_words
-    file = open("static/stop-word-list.csv", 'r')
+    file = open("static/stop3.csv", 'r')
     for line in file:
         l = line.split(", ")
         stop_words += l
@@ -45,13 +47,13 @@ def process_page(page, l):
 
     if text:
         l.append(text)
-    
+
+        
 def api_stuff(query):
     """Extract text from several urls using threads
     
     Arguments:
       query: a string containing a question
-
     Returns:
       texts: a list of text strings, one for each url page
     """
@@ -69,70 +71,42 @@ def api_stuff(query):
     return texts
 
 
-
 def who(query):
     pages = api_stuff(query)
-    pattern = "([A-Z]([a-z]+))?[A-Z]([a-z]+|\.) ([A-Z]')?([A-Z]([a-z]+))?[A-Z]([a-z]+|\.)"
+    pattern = "(([A-Z]([a-z]+))?[A-Z]([a-z]+|\.) ([A-Z]')?([A-Z]([a-z]+))?[A-Z]([a-z]+|\.))"
 
     freq = get_max_freq(pages, pattern)
-    l1 = max_val(freq)
-    
-    if len(l1) > 1:
-        l2 = max_val(points)
-        points = get_points(pages, pattern)
-        l1 += l2
-
-        count = Counter(l1)
-        common = count.most_common(1)
-    
-        return common[0][0]
-
-    if not l1:
-        return random.choice(answers)
-    
-    return l1[0]
-
-
-def when(query):
-    pages=api_stuff(query)
-    regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
-    regexp_era='(\d{1,10}) (BC|AD)'
-    l = get_max_freq_d(pages, regexp_std)
-    maxx = max_val(l)
-
+    maxx = max_val(freq)
+   
     if not maxx:
         return random.choice(answers)
     
     return maxx[0]
 
 
-def contains(phrase, l):
-    words = phrase.split(" ")
+def when(query):
+    pages=api_stuff(query)
+    #regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
+    regexp="([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})|(\d{1,10}) (BC|AD)|in (\d{1,6})"
+    #regexp_era='(\d{1,10}) (BC|AD)'
+    l = get_max_freq(pages, regexp)
+    maxx = max_val(l)
+    
+    if not maxx:
+        return random.choice(answers)
+    
+    return maxx[0]
+
+
+def contains(string, l):
+    words = string.split(" ")
     for word in words:
         if word.lower() in l:
+            #print "word: "+word.lower()
             return True
     return False
 
-def get_max_freq_d(pages, pattern):
-    """Tallies up matches to pattern within pages and calculates the match with the highest frequency
-
-    Arguments:
-      pages: A list of strings holding text 
-      pattern: a regex string for matching
-
-    Returns:
-      A dictionary of matches whose values reflect the frequency
-    """
-    d = {}
-    for page in pages:
-        it = re.finditer(pattern, page)
-        for match in it:
-            first = match.group(0)
-            if first not in d:
-                d[first] = 1
-            else:
-                d[first] += 1
-    return d   
+    
 
 def get_max_freq(pages, pattern):
     """Tallies up matches to pattern within pages and calculates the match with the highest frequency
@@ -143,6 +117,13 @@ def get_max_freq(pages, pattern):
 
     Returns:
       A dictionary of matches whose values reflect the frequency
+
+    >>> get_max_freq(["John Smith is not James Smith.","Julius Caesar was the Roman emperor."], "[A-Z]{1}[a-z]{2,} [A-Z]{1}[']?[A-Z]?[a-z]{1,}")
+    {"John Smith":1, "James Smith": 1, "Julius Caesar":1}
+    >>> get_max_freq(["World War Two began on September 1, 1939.", "The Roman Empire fell in 476 AD."], "([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})")
+    {"September 1, 1939":1}
+    >>> get_max_freq(["World War Two began on September 1, 1939.", "The Roman Empire fell in 476 AD."], "(\d{1,10}) (BC|AD)")
+    {"476 AD"}
     """
     d = {}
     for page in pages:
@@ -154,33 +135,10 @@ def get_max_freq(pages, pattern):
             else:
                 d[first] += 1
 
-    for key in d:
-        for page in pages:
-            pattern = pattern[pattern.find(" ")+1:]
-            l = re.findall(pattern, page)
-            words = key.split()
-            for word in words:
-                while (word in l):
-                    d[key] += 1
-                    index = l.index(word)
-                    l.pop(index)
-                
     return d
    
-
-def get_points(pages, pattern):
-    d = get_max_freq(pages, pattern)
-    total_pages = len(pages)
    
-    for key in d:
-        page_count = 0
-        for page in pages:
-            if key in page:
-                page_count += 1
-        d[key] = (float(page_count) / total_pages) * d[key]
 
-    return d
-    
 
 def max_val(d):
     """finds the key with the largest corresponding value in dictionary d
@@ -196,11 +154,9 @@ def max_val(d):
 
     for key in d.keys():
         if contains(key, stop_words):
+            #print 'out: '+ key
             d.pop(key)
-
-    if not d:
-        return []
-    
+            
     max_val = max(d.values())
     keys = []
     for x,y in d.items():
@@ -219,25 +175,24 @@ def find_results(query):
      If the query is valid, return results of the query. Else, return error
      
     """
-    query=query.lower()
-    if "who" in query:
+    q=query.lower()
+    if "who" in q:
         return who(query)
-    elif "when" in query:
+    elif "when" in q:
         return when(query)
     else:
         return random.choice(answers)
     
 if __name__ == "__main__":
-
+    import doctest
+    doctest.testmod()
     #print who("Who wrote The Things They Carried?")
-    #print who("Who created Facebook?")
-    print who("Who played the first Spiderman?")
     #print who("Who said \" Let them eat cake\"?")
-    #print find_results("Who played Spiderman?")
-    #print find_results("Who killed Julius Caesar?")
+    #print who("Who was emperor of Rome?")
     #print when("When did World War II start?")        
 
-   
+       
+           
            
            
 
