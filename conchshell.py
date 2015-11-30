@@ -46,10 +46,11 @@ def who(query):
 
 def when(query):
     pages=api_stuff(query)
-    regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
+    #regexp_std='([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})'
     #regexp_std='[A-Z]'
-    regexp_era='(\d{1,10}) (BC|AD)'
-    l = get_max_freq(pages, regexp_std)
+    regexp="([A-Z][a-z]{2,8}) (\d{1,2}),? (\d{1,4})|(\d{1,10}) (BC|AD)"
+    #regexp_era='(\d{1,10}) (BC|AD)'
+    l = get_max_freq(pages, regexp)
     """
     d={}
     result=[]
@@ -142,9 +143,9 @@ def find_results(query):
      
     """
     q=query.lower()
-    if "who" in query:
+    if "who" in q:
         return who(query)
-    elif "when" in query:
+    elif "when" in q:
         return when(query)
     else:
         return "invalid"
